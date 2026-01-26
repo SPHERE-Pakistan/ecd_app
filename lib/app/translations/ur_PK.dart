@@ -1,7 +1,6 @@
 final Map<String, String> urPK = {
   "bmi": "بی ایم آئی",
   "please_select_language_first": "پہلے اپنی زبان منتخب کریں",
-
   'hello': 'سلام',
   'welcome': 'خوش آمدید',
   'week': 'ہفتہ',

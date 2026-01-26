@@ -8,7 +8,7 @@ class SplashController extends GetxController {
     super.onInit();
     Timer(const Duration(seconds: 2), () {
       // Navigate directly to Pregnancy Splash
-      Get.offAllNamed('/pregnancy_splash');
+      Get.offAllNamed('/google_login');
     });
   }
 
