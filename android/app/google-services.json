@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "718958764929",
+    "project_id": "babysafe-2b431",
+    "storage_bucket": "babysafe-2b431.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718958764929:android:7835f4678c271d12c43e80",
+        "android_client_info": {
+          "package_name": "com.sphere.babysafe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "718958764929-muoff3qjc6bc33q91q7etimrbpmmrjne.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sphere.babysafe",
+            "certificate_hash": "a4157e9682a4a6b6c468f56fd6029ff64c1b0c71"
+          }
+        },
+        {
+          "client_id": "718958764929-1ijbplg8ntfbi1241enrv6g8genl7ad4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmCHzwxjMH3uhtCiwMLQGky5wamcq2yEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "718958764929-1ijbplg8ntfbi1241enrv6g8genl7ad4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "718958764929-10ifpbm3f17gg4uhdvihl88ln9g2298q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.babysafe"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

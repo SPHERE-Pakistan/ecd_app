@@ -1,0 +1,229 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../services/auth_service.dart';
+import '../../../utils/neo_safe_theme.dart';
+import '../controllers/get_pregnant_requirements_controller.dart';
+
+class GetPregnantProfileHeader extends StatelessWidget {
+  final GetPregnantRequirementsController controller;
+
+  const GetPregnantProfileHeader({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<GetPregnantRequirementsController>(
+      builder: (_) => FutureBuilder<Map<String, String?>>(
+        future: _getHeaderData(),
+        builder: (context, snapshot) {
+          final data = snapshot.data ?? {};
+          final userName = data['name'] ?? 'user'.tr;
+          final purpose = data['purpose'] ?? '';
+          final statusText = _mapPurposeToTitle(purpose);
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Profile Avatar
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        NeoSafeColors.primaryPink,
+                        NeoSafeColors.primaryPink.withOpacity(0.7),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: NeoSafeColors.primaryPink.withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.person,
+                    size: 40,
+                    color: Colors.white,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // User Name (Editable)
+                GestureDetector(
+                  onTap: () => _showEditNameDialog(context, userName),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        userName,
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  color: NeoSafeColors.primaryText,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.edit,
+                        size: 16,
+                        color: NeoSafeColors.primaryPink.withOpacity(0.7),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // Status
+                // Container(
+                //   padding:
+                //       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                //   decoration: BoxDecoration(
+                //     color: NeoSafeColors.success.withOpacity(0.1),
+                //     borderRadius: BorderRadius.circular(20),
+                //     border: Border.all(
+                //       color: NeoSafeColors.success.withOpacity(0.3),
+                //       width: 1,
+                //     ),
+                //   ),
+                //   child: Row(
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [
+                //       Icon(
+                //         Icons.favorite,
+                //         size: 16,
+                //         color: NeoSafeColors.success,
+                //       ),
+                //       const SizedBox(width: 6),
+                //       Text(
+                //         statusText,
+                //         style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                //               color: NeoSafeColors.success,
+                //               fontWeight: FontWeight.w600,
+                //             ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<Map<String, String?>> _getHeaderData() async {
+    final auth = Get.find<AuthService>();
+    final userId = auth.currentUser.value?.id;
+    final prefs = await SharedPreferences.getInstance();
+
+    String? name;
+    String? purpose;
+
+    // Priority 1: Try from AuthService onboarding data (user-scoped)
+    if (userId != null && userId.isNotEmpty) {
+      name = await auth.getOnboardingData('onboarding_name', userId);
+      purpose = await auth.getOnboardingData('onboarding_purpose', userId);
+    }
+
+    // Priority 2: Fallback to SharedPreferences directly
+    name ??= prefs.getString('onboarding_name');
+    purpose ??= prefs.getString('onboarding_purpose');
+
+    // Priority 3: Final fallback - use user model fullName if available
+    if ((name == null || name.isEmpty) && auth.currentUser.value != null) {
+      final userFullName = auth.currentUser.value!.fullName;
+      if (userFullName.isNotEmpty && userFullName != 'User') {
+        name = userFullName;
+      }
+    }
+
+    return {'name': name ?? 'user'.tr, 'purpose': purpose ?? ''};
+  }
+
+  String _mapPurposeToTitle(String purpose) {
+    switch (purpose) {
+      case 'get_pregnant':
+        return 'trying_to_conceive'.tr;
+      case 'pregnant':
+        return 'pregnant'.tr;
+      case 'have_baby':
+        return 'have_baby'.tr;
+      default:
+        return 'trying_to_conceive'.tr;
+    }
+  }
+
+  void _showEditNameDialog(BuildContext context, String currentName) {
+    final TextEditingController nameController = TextEditingController(
+      text: currentName,
+    );
+
+    Get.dialog(
+      AlertDialog(
+        title: Text('edit_name'.tr),
+        content: TextField(
+          controller: nameController,
+          decoration: InputDecoration(
+            labelText: 'name'.tr,
+            border: const OutlineInputBorder(),
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('cancel'.tr),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final newName = nameController.text.trim();
+              if (newName.isNotEmpty) {
+                final auth = Get.find<AuthService>();
+                final userId = auth.currentUser.value?.id;
+                if (userId != null && userId.isNotEmpty) {
+                  await auth.setOnboardingData(
+                      'onboarding_name', userId, newName);
+                } else {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setString('onboarding_name', newName);
+                }
+                Get.back();
+                Get.snackbar(
+                  'success'.tr,
+                  'name_updated_success'.tr,
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: NeoSafeColors.success.withOpacity(0.1),
+                  colorText: NeoSafeColors.success,
+                );
+                // Trigger rebuild
+                (context as Element).markNeedsBuild();
+                try {
+                  Get.find<GetPregnantRequirementsController>().update();
+                } catch (_) {}
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: NeoSafeColors.primaryPink,
+              foregroundColor: Colors.white,
+            ),
+            child: Text('save'.tr),
+          ),
+        ],
+      ),
+    );
+  }
+}

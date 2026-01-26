@@ -1,0 +1,450 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:babysafe/app/data/const/risk_factor.dart';
+import 'package:babysafe/app/utils/neo_safe_theme.dart';
+import 'package:babysafe/app/services/auth_service.dart';
+
+class RiskFactorView extends StatelessWidget {
+  const RiskFactorView({super.key});
+
+  // Icon mapping for different risk factor categories (keys match risk_factor.dart)
+  final Map<String, IconData> categoryIcons = const {
+    "diabetic_mothers": Icons.medical_information_rounded,
+    "rh_negative_mothers": Icons.biotech_rounded,
+    "multiple_pregnancy": Icons.group_rounded,
+    "first_cousin_marriage": Icons.family_restroom_rounded,
+    "second_cousin_marriage": Icons.family_restroom_rounded,
+    "relative_marriage": Icons.family_restroom_rounded,
+    "no_relation": Icons.people_rounded,
+  };
+
+  IconData _getIconForCategory(String categoryKey) {
+    return categoryIcons[categoryKey] ?? Icons.warning_amber_rounded;
+  }
+
+  // Determine which categories apply to the current user
+  Set<String> _getUserRiskCategories() {
+    final authService = Get.find<AuthService>();
+    final user = authService.currentUser.value;
+    final Set<String> categories = {};
+
+    if (user == null) return categories;
+
+    // Rh-negative mother
+    if (user.motherBloodGroup?.contains('-') == true) {
+      categories.add('rh_negative_mothers');
+    }
+
+    // Relation-based
+    switch ((user.relation ?? '').toLowerCase()) {
+      case 'first cousin':
+        categories.add('first_cousin_marriage');
+        break;
+      case 'second cousin':
+        categories.add('second_cousin_marriage');
+        break;
+      case 'relative':
+        categories.add('relative_marriage');
+        break;
+      case 'no relation':
+        categories.add('no_relation');
+        break;
+      default:
+        break;
+    }
+
+    return categories;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: NeoSafeColors.warmWhite,
+      appBar: AppBar(
+        title: Text(
+          'risk_factors'.tr,
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                NeoSafeColors.primaryPink,
+                NeoSafeColors.roseAccent,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              NeoSafeColors.warmWhite,
+              NeoSafeColors.lightBeige.withOpacity(0.3),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: riskFactorGroups.isEmpty
+            ? _buildEmptyState(context, theme)
+            : _buildRiskFactorsList(context, theme),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, ThemeData theme) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              NeoSafeColors.creamWhite,
+              NeoSafeColors.palePink.withOpacity(0.5),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: NeoSafeColors.success.withOpacity(0.3),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: NeoSafeColors.success.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    NeoSafeColors.success.withOpacity(0.9),
+                    NeoSafeColors.success.withOpacity(0.7),
+                  ],
+                ),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: NeoSafeColors.success.withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.health_and_safety_rounded,
+                color: Colors.white,
+                size: 48,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'great_news'.tr,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: NeoSafeColors.primaryText,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'no_risk_factors_for_stage'.tr,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: NeoSafeColors.secondaryText,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRiskFactorsList(BuildContext context, ThemeData theme) {
+    final Set<String> userRiskCategories = _getUserRiskCategories();
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        // Header card
+        Container(
+          margin: const EdgeInsets.only(bottom: 24),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                NeoSafeColors.warning.withOpacity(0.1),
+                NeoSafeColors.palePink.withOpacity(0.3),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: NeoSafeColors.warning.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: NeoSafeColors.warning.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.info_outline_rounded,
+                  color: NeoSafeColors.warning,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'risk_awareness'.tr,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: NeoSafeColors.primaryText,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'risk_awareness_subtitle'.tr,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: NeoSafeColors.secondaryText,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Risk factor categories
+        ...riskFactorGroups.entries.map((entry) {
+          final String categoryKey = entry.key;
+          final categoryIcon = _getIconForCategory(categoryKey);
+          final bool isUserRisk = userRiskCategories.contains(categoryKey);
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: isUserRisk
+                    ? [
+                        NeoSafeColors.warning.withOpacity(0.12),
+                        NeoSafeColors.palePink.withOpacity(0.4),
+                      ]
+                    : [
+                        NeoSafeColors.creamWhite,
+                        NeoSafeColors.palePink.withOpacity(0.3),
+                      ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: (isUserRisk
+                        ? NeoSafeColors.warning
+                        : NeoSafeColors.primaryPink)
+                    .withOpacity(0.2),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: (isUserRisk
+                          ? NeoSafeColors.warning
+                          : NeoSafeColors.primaryPink)
+                      .withOpacity(0.08),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Category header
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isUserRisk
+                          ? [
+                              NeoSafeColors.warning.withOpacity(0.12),
+                              NeoSafeColors.warning.withOpacity(0.06),
+                            ]
+                          : [
+                              NeoSafeColors.primaryPink.withOpacity(0.1),
+                              NeoSafeColors.roseAccent.withOpacity(0.05),
+                            ],
+                    ),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: isUserRisk
+                                ? [
+                                    NeoSafeColors.warning.withOpacity(0.95),
+                                    NeoSafeColors.warning.withOpacity(0.75),
+                                  ]
+                                : [
+                                    NeoSafeColors.primaryPink.withOpacity(0.9),
+                                    NeoSafeColors.roseAccent.withOpacity(0.8),
+                                  ],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (isUserRisk
+                                      ? NeoSafeColors.warning
+                                      : NeoSafeColors.primaryPink)
+                                  .withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          categoryIcon,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          categoryKey.tr,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: NeoSafeColors.primaryText,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: (isUserRisk
+                                  ? NeoSafeColors.warning
+                                  : NeoSafeColors.primaryPink)
+                              .withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          "${entry.value.length}",
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: isUserRisk
+                                ? NeoSafeColors.warning
+                                : NeoSafeColors.primaryPink,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Risk factor items
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: entry.value.map((pointKey) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: (isUserRisk
+                                    ? NeoSafeColors.warning
+                                    : NeoSafeColors.primaryPink)
+                                .withOpacity(0.15),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(top: 2),
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: isUserRisk
+                                      ? [
+                                          NeoSafeColors.warning,
+                                          NeoSafeColors.warning
+                                              .withOpacity(0.8),
+                                        ]
+                                      : [
+                                          NeoSafeColors.primaryPink,
+                                          NeoSafeColors.roseAccent,
+                                        ],
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                pointKey.tr,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: NeoSafeColors.primaryText,
+                                  height: 1.4,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+}

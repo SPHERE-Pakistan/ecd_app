@@ -1,0 +1,3 @@
+ 2.⁠ ⁠add dropdown for age in the onboarding age question okie also there is a skip button there when y skip that the default age 25 is stored.a container not to big or on full screen. just make the dropdown size conatiner that looks good also the age limit is upto 100 and min limit is upto amm 15 okie in the drop down.
+
+3.⁠ on simple profilepage mean profile page u have to remove the logout button from that and inplace of that add there the logout button and funtionalty same as the get pregnant profile page okie 
