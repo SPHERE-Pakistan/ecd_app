@@ -142,7 +142,7 @@ const List<BabyDevelopmentData> babyDevelopmentData = [
     healthTips:
         "Continue tummy time and start introducing toys. Monitor for developmental delays.",
     feedingInfo:
-        "Feeding 6-8 times per day. May start to show interest in solid foods (but not ready yet).",
+        "Feeding 6-7 times per day. May start to show interest in solid foods (but not ready yet).",
     sleepInfo:
         "Sleeping 11-14 hours per day. May start to sleep longer at night.",
     weight: "5.5-7.5 kg",

@@ -1,9 +1,11 @@
 final Map<String, String> enUS = {
   "bmi": "BMI",
+  "account_created": "Account created successfully",
   "please_select_language_first": "Please select your language first",
 
   'hello': 'Hello',
   'welcome': 'Welcome',
+  'welcome_back': 'Welcome Back',
   'week': 'Week',
   'size': 'Size',
   'start_birth_plan': 'Start Your Birth Plan',
@@ -128,7 +130,7 @@ final Map<String, String> enUS = {
   'get_pregnant': 'Get pregnant',
   'get_pregnant_subtitle': 'Track your cycles and best days to conceive',
   'track_my_pregnancy': 'Track pregnancy',
-  'track_my_wife_pregnancy': 'Track my Wife pregnancy',
+  'track_my_wife_pregnancy': 'Track my wife pregnancy',
 
   'track_my_pregnancy_subtitle':
       'Monitor your baby\'s progress and upcoming milestones',
@@ -1946,7 +1948,7 @@ final Map<String, String> enUS = {
   "milestone_title_36": "3–4 Years",
   "milestone_title_48": "4–5 Years",
   "milestone_title_60": "5–6 Years",
-  "milestone_title_72": "6–8 Years",
+  "milestone_title_72": "6–7 Years",
   "milestone_title_96": "8 Years Overview",
 
 // Descriptions
@@ -3699,7 +3701,7 @@ final Map<String, String> enUS = {
       'Surgical delivery through abdominal incision',
   'delivery_mode_may_be_planned_or_emergency':
       'May be planned or emergency procedure',
-  'delivery_mode_longer_recovery': 'Longer recovery time (6-8 weeks)',
+  'delivery_mode_longer_recovery': 'Longer recovery time (6-7 weeks)',
   'delivery_mode_higher_risk_complications': 'Higher risk of complications',
   'delivery_mode_necessary_for_medical': 'May be necessary for medical reasons',
 
@@ -4342,6 +4344,10 @@ final Map<String, String> enUS = {
   "milestone_title_18": "18 Months",
   "milestone_title_19": "19 Months",
   "milestone_title_20": "20 Months",
+  "milestone_title_21": "21 Months",
+  "milestone_title_22": "22 Months",
+  "milestone_title_23": "23 Months",
+  "milestone_title_24": "2 Years",
   "explain_in_detail": "Explain in detail",
 
   // Children management section

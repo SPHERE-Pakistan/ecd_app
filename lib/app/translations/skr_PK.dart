@@ -1,9 +1,12 @@
 final Map<String, String> skrPK = {
   "bmi": "بی ایم آئی",
+  "account_created": "اکاونٹ کامیابی نال بن گیا ہے",
+
   "please_select_language_first": "سڀ توں پہلے اپنی زبان چُنّو",
 
   'hello': 'ہیلو',
   'welcome': 'بھلی کریا آھیں',
+  'welcome_back': 'واپس آیاں',
   'week': 'ہفتہ',
   'size': 'سائز',
   'start_birth_plan': 'جنم دی تیاری شروع کرو',
@@ -127,7 +130,7 @@ final Map<String, String> skrPK = {
   'get_pregnant': 'حمل ٹھہرواؤ',
   'get_pregnant_subtitle': 'اپنے چکر تے بہترین دن ٹریک کرو',
   'track_my_pregnancy': 'حمل دی نگرانی کرو',
-  'track_my_wife_pregnancy': 'میری بیوی دی حمل دی نگرانی کرو',
+  'track_my_wife_pregnancy': 'اپنی بیوی دی حمل دی نگرانی کرو',
   'track_my_pregnancy_subtitle':
       'اپنے بچے دی نشونما تے آنے والے مراحل دا پتہ رکھو',
   'child_development': 'بچے دی نشونما',
@@ -1957,7 +1960,7 @@ final Map<String, String> skrPK = {
   "milestone_title_36": "3-4 سال",
   "milestone_title_48": "4-5 سال",
   "milestone_title_60": "5-6 سال",
-  "milestone_title_72": "6-8 سال",
+  "milestone_title_72": "6-7 سال",
   "milestone_title_96": "8 سال دا جائزہ",
 
 // Descriptions
@@ -3711,7 +3714,7 @@ final Map<String, String> skrPK = {
   'delivery_mode_surgical_delivery': 'پیٹ دے آپریشن دے ذریعے زچگی',
   'delivery_mode_may_be_planned_or_emergency':
       'ایہہ طے شدہ یا ہنگامی طور تے تھی سڳدا اے',
-  'delivery_mode_longer_recovery': 'صحت یابی وچ ودھ ویلا لڳدا اے (6-8 ہفتے)',
+  'delivery_mode_longer_recovery': 'صحت یابی وچ ودھ ویلا لڳدا اے (6-7 ہفتے)',
   'delivery_mode_higher_risk_complications': 'پیچیدگیاں دا ودھ خطرہ',
   'delivery_mode_necessary_for_medical':
       'کݙاہیں کݙاہیں طبی وجوہات دی بنا تے ضروری تھیندا اے',

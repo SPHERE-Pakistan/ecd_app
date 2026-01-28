@@ -1,8 +1,10 @@
 final Map<String, String> urPK = {
   "bmi": "بی ایم آئی",
+  "account_created": "اکاؤنٹ کامیابی سے بن گیا ہے",
   "please_select_language_first": "پہلے اپنی زبان منتخب کریں",
   'hello': 'سلام',
   'welcome': 'خوش آمدید',
+  'welcome_back': 'خوش آمدید دوبارہ',
   'week': 'ہفتہ',
   'size': 'سائز',
   'start_birth_plan': 'جنم کی تیاری شروع کریں',
@@ -132,7 +134,7 @@ final Map<String, String> urPK = {
   'get_pregnant_subtitle':
       'اپنے سائیکل اور حاملہ ہونے کے بہترین دنوں کو ٹریک کریں',
   'track_my_pregnancy': 'حمل کی نگرانی',
-  'track_my_wife_pregnancy': 'میری بیوی کے حمل کی نگرانی کریں',
+  'track_my_wife_pregnancy': 'اپنی بیوی کے حمل کی نگرانی کریں',
   'track_my_pregnancy_subtitle':
       'اپنے بچے کی نشونما اور آنے والے سنگ میل کی نگرانی کریں',
   'child_development': 'بچے کی نشوونما',
@@ -2010,7 +2012,7 @@ final Map<String, String> urPK = {
   "milestone_title_36": "3–4 سال",
   "milestone_title_48": "4–5 سال",
   "milestone_title_60": "5–6 سال",
-  "milestone_title_72": "6–8 سال",
+  "milestone_title_72": "6–7 سال",
   "milestone_title_96": "8 سال — جائزہ",
 
   "milestone_desc_0":
@@ -3672,7 +3674,7 @@ final Map<String, String> urPK = {
   'delivery_mode_surgical_delivery': 'پیٹ کے آپریشن کے ذریعے زچگی',
   'delivery_mode_may_be_planned_or_emergency':
       'یہ طے شدہ یا ہنگامی طور پر ہو سکتا ہے',
-  'delivery_mode_longer_recovery': 'صحت یابی میں زیادہ وقت لگتا ہے (6-8 ہفتے)',
+  'delivery_mode_longer_recovery': 'صحت یابی میں زیادہ وقت لگتا ہے (6-7 ہفتے)',
   'delivery_mode_higher_risk_complications': 'پیچیدگیوں کا زیادہ خطرہ',
   'delivery_mode_necessary_for_medical':
       'کبھی کبھار طبی وجوہات کی بنا پر ضروری ہوتا ہے',
