@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBmCHzwxjMH3uhtCiwMLQGky5wamcq2yEA',
-    appId: '1:718958764929:android:1c4e08d1ac124d3fc43e80',
+    appId: '1:718958764929:android:b3954951b6c63581c43e80',
     messagingSenderId: '718958764929',
     projectId: 'babysafe-2b431',
     storageBucket: 'babysafe-2b431.firebasestorage.app',

@@ -7,18 +7,62 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:718958764929:android:7835f4678c271d12c43e80",
+        "mobilesdk_app_id": "1:718958764929:android:b3954951b6c63581c43e80",
         "android_client_info": {
-          "package_name": "com.sphere.babysafe"
+          "package_name": "com.ecd.sphere"
         }
       },
       "oauth_client": [
         {
-          "client_id": "718958764929-muoff3qjc6bc33q91q7etimrbpmmrjne.apps.googleusercontent.com",
+          "client_id": "718958764929-1ijbplg8ntfbi1241enrv6g8genl7ad4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmCHzwxjMH3uhtCiwMLQGky5wamcq2yEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "718958764929-1ijbplg8ntfbi1241enrv6g8genl7ad4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "718958764929-10ifpbm3f17gg4uhdvihl88ln9g2298q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.babysafe"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718958764929:android:7835f4678c271d12c43e80",
+        "android_client_info": {
+          "package_name": "com.ecd.sphere"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "718958764929-305uovuop0h6ibc64bgt56p2spgvafm2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.sphere.babysafe",
-            "certificate_hash": "a4157e9682a4a6b6c468f56fd6029ff64c1b0c71"
+            "package_name": "com.ecd.sphere",
+            "certificate_hash": "429a6396bdefe1cb9cbf3a31811252d25c43aab8"
+          }
+        },
+        {
+          "client_id": "718958764929-49ss1al14re7ohj4r9898bb82sc5k3j6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecd.sphere",
+            "certificate_hash": "540a58e75d8b236adcc0d4be5e27ce332f8624e2"
           }
         },
         {
