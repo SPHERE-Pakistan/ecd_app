@@ -130,7 +130,7 @@ final Map<String, String> enUS = {
   'get_pregnant': 'Get pregnant',
   'get_pregnant_subtitle': 'Track your cycles and best days to conceive',
   'track_my_pregnancy': 'Track pregnancy',
-  'track_my_wife_pregnancy': 'Track my wife pregnancy',
+  'track_my_wife_pregnancy': "Track my wife's pregnancy",
 
   'track_my_pregnancy_subtitle':
       'Monitor your baby\'s progress and upcoming milestones',
