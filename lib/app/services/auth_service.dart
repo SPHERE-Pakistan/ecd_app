@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:babysafe/app/modules/google_login/views/google_login_view.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -130,7 +131,7 @@ class AuthService extends GetxService {
   Future<void> navigateAfterLogin() async {
     try {
       if (currentUser.value == null) {
-        Get.offAllNamed('/google_login');
+        Get.offAll(GoogleLoginView());
         return;
       }
 
@@ -437,7 +438,7 @@ class AuthService extends GetxService {
       );
 
       // Navigate to Google Login after logout
-      Get.offAllNamed('/google_login');
+      Get.offAll(GoogleLoginView());
     } catch (e) {
       print('Logout error: $e');
     }

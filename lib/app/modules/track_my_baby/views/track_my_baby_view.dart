@@ -3,6 +3,7 @@ import 'package:babysafe/app/modules/pregnancy_splash/widgets/language_switcher.
 import 'package:babysafe/app/modules/track_my_baby/views/pregArticleRead.dart';
 import 'package:babysafe/app/modules/track_my_pregnancy/controllers/track_my_pregnancy_controller.dart';
 import 'package:babysafe/app/services/goal_service.dart';
+import 'package:babysafe/app/services/speech_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:babysafe/app/data/models/baby_milestone_data_list.dart';
@@ -824,7 +825,14 @@ class _MilestonesDetailPageState extends State<MilestonesDetailPage> {
       controller.selectedChildIndex
     ], (_) => _pickDefaultMilestone());
   }
+  final speechService = Get.find<SpeechService>();
 
+  Future<bool> _onBackPressed() async {
+    // Stop any ongoing speech
+    await speechService.stop();
+
+    return true;
+  }
   // void _pickDefaultMilestone() {
   //   int? idx = _findWeekBasedMilestoneIndex(controller.babyAgeInDays.value);
 
@@ -937,376 +945,379 @@ class _MilestonesDetailPageState extends State<MilestonesDetailPage> {
     GlobalGoal().goal = "track_baby";
     final theme = Theme.of(context);
     final themeService = Get.find<ThemeService>();
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          // Custom App Bar with Profile Button (copied from TrackMyBabyView)
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            expandedHeight: 166.0,
-            floating: false,
-            pinned: true,
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            actions: [
-              Obx(() => GoToHomeIconButton(
-                    circleColor: themeService.getPrimaryColor(),
-                    iconColor: Colors.white,
-                    top: 0,
-                  )),
-              SizedBox(width: 12),
-              GetX<AuthService>(
-                builder: (authService) {
-                  final user = authService.currentUser.value;
-                  final profileImagePath = user?.profileImagePath;
-                  final isEnglish =
-                      (Get.locale?.languageCode ?? 'en').startsWith('en');
-                  final horizontalMargin = EdgeInsets.only(
-                    left: isEnglish ? 0 : 16,
-                    right: isEnglish ? 16 : 0,
-                  );
-                  return Container(
-                    margin: horizontalMargin,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          themeService.getLightColor(),
-                          themeService.getPrimaryColor(),
-                        ],
-                      ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color:
-                              themeService.getPrimaryColor().withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.put(ProfileController());
-                        Get.to(() => const ProfileView());
-                      },
-                      child: CircleAvatar(
-                        radius: 22,
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: (profileImagePath != null &&
-                                profileImagePath.isNotEmpty)
-                            ? Image.file(
-                                File(profileImagePath),
-                              ).image
-                            : null,
-                        child: (profileImagePath == null ||
-                                profileImagePath.isEmpty)
-                            ? const Icon(Icons.person,
-                                color: Colors.white, size: 28)
-                            : null,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              background: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "track_my_baby".tr,
-                            style: theme.textTheme.displaySmall?.copyWith(
-                              color: NeoSafeColors.primaryText,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 21,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(children: [
-                            Text(
-                              controller.getGreeting(),
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: NeoSafeColors.secondaryText,
-                              ),
-                            ),
-                            Spacer(),
-                            const LanguageSwitcher(),
-                          ]),
-                          // Child selector horizontal scroll
-                          Obx(() {
-                            if (controller.allChildren.length > 1) {
-                              final sortedChildren =
-                                  controller.sortedChildrenByAge;
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: SizedBox(
-                                  height: 40,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 4),
-                                    itemCount: sortedChildren.length,
-                                    itemBuilder: (context, sortedIndex) {
-                                      final entry = sortedChildren[sortedIndex];
-                                      final originalIndex = entry.key;
-                                      final child = entry.value;
-
-                                      // Get color based on this child's gender
-                                      final childGender =
-                                          child.gender.toLowerCase();
-                                      final isMale = childGender == 'male' ||
-                                          childGender == 'boy';
-                                      final childColor = isMale
-                                          ? ThemeService.primaryBlue
-                                          : NeoSafeColors.primaryPink;
-
-                                      return Obx(() {
-                                        final isSelected = controller
-                                                .selectedChildIndex.value ==
-                                            originalIndex;
-
-                                        return GestureDetector(
-                                          onTap: () {
-                                            controller
-                                                .selectChild(originalIndex);
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 4),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 8),
-                                            constraints: BoxConstraints(
-                                              minWidth: 80,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: isSelected
-                                                  ? childColor
-                                                  : Colors.white
-                                                      .withOpacity(0.9),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              border: Border.all(
-                                                color: isSelected
-                                                    ? childColor
-                                                    : childColor
-                                                        .withOpacity(0.3),
-                                                width: isSelected ? 2 : 1,
-                                              ),
-                                              boxShadow: isSelected
-                                                  ? [
-                                                      BoxShadow(
-                                                        color: childColor
-                                                            .withOpacity(0.2),
-                                                        blurRadius: 8,
-                                                        offset: Offset(0, 2),
-                                                      ),
-                                                    ]
-                                                  : [],
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                child.name,
-                                                style: TextStyle(
-                                                  color: isSelected
-                                                      ? Colors.white
-                                                      : NeoSafeColors
-                                                          .primaryText,
-                                                  fontSize: 12,
-                                                  fontWeight: isSelected
-                                                      ? FontWeight.w600
-                                                      : FontWeight.w500,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      });
-                                    },
-                                  ),
-                                ),
-                              );
-                            }
-                            return SizedBox.shrink();
-                          }),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.all(20),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                GetBuilder<TrackMyBabyController>(
-                  builder: (controller) {
-                    return _BabyOverviewCard(controller: controller);
-                  },
-                ),
-                const SizedBox(height: 24),
-              ]),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Beautified Chips
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: 42,
-                  child: ListView.separated(
-                    controller: _chipScrollController,
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    itemCount: _getSortedMilestoneIndexes().length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 8),
-                    itemBuilder: (ctx, displayedIdx) {
-                      final i = _getSortedMilestoneIndexes()[displayedIdx];
-                      return Obx(() {
-                        final isSelected = _selectedIndex.value == i;
-                        final ms = babyMilestones[i];
-                        final chipLabel = _getMilestoneChipLabel(ms.month);
-                        return GestureDetector(
-                          onTap: () {
-                            _selectedIndex.value = i;
-                            _scrollToSelected();
-                          },
-                          child: AnimatedContainer(
-                            width: 100,
-                            duration: const Duration(milliseconds: 200),
-                            height: 36,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 6),
-                            decoration: BoxDecoration(
-                              gradient: isSelected
-                                  ? LinearGradient(colors: [
-                                      themeService.getPrimaryColor(),
-                                      NeoSafeColors.secondaryText
-                                          .withOpacity(0.6)
-                                    ])
-                                  : LinearGradient(colors: [
-                                      Colors.grey.shade100,
-                                      Colors.white
-                                    ]),
-                              borderRadius: BorderRadius.circular(28),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: themeService
-                                            .getPrimaryColor()
-                                            .withOpacity(0.13),
-                                        blurRadius: 5,
-                                        offset: Offset(0, 2),
-                                      )
-                                    ]
-                                  : [],
-                              border: Border.all(
-                                color: isSelected
-                                    ? themeService.getPrimaryColor()
-                                    : Colors.grey.shade300,
-                                width: isSelected ? 1.6 : 1,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                chipLabel,
-                                style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: isSelected
-                                              ? Colors.white
-                                              : themeService.getPrimaryColor(),
-                                          fontWeight: isSelected
-                                              ? FontWeight.w600
-                                              : FontWeight.w400,
-                                          letterSpacing: 0.1,
-                                          fontSize: 12,
-                                        ) ??
-                                    TextStyle(),
-                              ),
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                  ),
-                ),
-
-                // Details card using selected chip
-                Obx(() {
-                  final selected = babyMilestones[_selectedIndex.value];
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                    child: _buildMilestoneCard(context, selected),
-                  );
-                }),
-
-                // Postpartum Care Card - Show only if baby is 2 weeks or less
-                Obx(() {
-                  final controller = Get.find<TrackMyBabyController>();
-                  if (controller.babyAgeInWeeks.value <= 2) {
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                      child: GoalCard(
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            // Custom App Bar with Profile Button (copied from TrackMyBabyView)
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              expandedHeight: 166.0,
+              floating: false,
+              pinned: true,
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              actions: [
+                Obx(() => GoToHomeIconButton(
+                      circleColor: themeService.getPrimaryColor(),
+                      iconColor: Colors.white,
+                      top: 0,
+                    )),
+                SizedBox(width: 12),
+                GetX<AuthService>(
+                  builder: (authService) {
+                    final user = authService.currentUser.value;
+                    final profileImagePath = user?.profileImagePath;
+                    final isEnglish =
+                        (Get.locale?.languageCode ?? 'en').startsWith('en');
+                    final horizontalMargin = EdgeInsets.only(
+                      left: isEnglish ? 0 : 16,
+                      right: isEnglish ? 16 : 0,
+                    );
+                    return Container(
+                      margin: horizontalMargin,
+                      decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
                             themeService.getLightColor(),
-                            themeService.getAccentColor()
+                            themeService.getPrimaryColor(),
                           ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
                         ),
-                        icon: Icons.local_hospital,
-                        iconColor: NeoSafeColors.roseAccent,
-                        title: "postpartum_care".tr,
-                        subtitle: "postpartum_care_subtitle".tr,
-                        onTap: () => Get.toNamed('/postpartum_care'),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                themeService.getPrimaryColor().withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.put(ProfileController());
+                          Get.to(() => const ProfileView());
+                        },
+                        child: CircleAvatar(
+                          radius: 22,
+                          backgroundColor: Colors.transparent,
+                          backgroundImage: (profileImagePath != null &&
+                                  profileImagePath.isNotEmpty)
+                              ? Image.file(
+                                  File(profileImagePath),
+                                ).image
+                              : null,
+                          child: (profileImagePath == null ||
+                                  profileImagePath.isEmpty)
+                              ? const Icon(Icons.person,
+                                  color: Colors.white, size: 28)
+                              : null,
+                        ),
                       ),
                     );
-                  }
-                  return SizedBox.shrink();
-                }),
+                  },
+                ),
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                background: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "track_my_baby".tr,
+                              style: theme.textTheme.displaySmall?.copyWith(
+                                color: NeoSafeColors.primaryText,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 21,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(children: [
+                              Text(
+                                controller.getGreeting(),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: NeoSafeColors.secondaryText,
+                                ),
+                              ),
+                              Spacer(),
+                              const LanguageSwitcher(),
+                            ]),
+                            // Child selector horizontal scroll
+                            Obx(() {
+                              if (controller.allChildren.length > 1) {
+                                final sortedChildren =
+                                    controller.sortedChildrenByAge;
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 12),
+                                  child: SizedBox(
+                                    height: 40,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 4),
+                                      itemCount: sortedChildren.length,
+                                      itemBuilder: (context, sortedIndex) {
+                                        final entry = sortedChildren[sortedIndex];
+                                        final originalIndex = entry.key;
+                                        final child = entry.value;
 
-                // More Details button
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                  child: Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: StadiumBorder(),
-                        backgroundColor: themeService.getPrimaryColor(),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                        elevation: 3,
-                      ),
-                      onPressed: () {
-                        Get.to(() => TrackMyBabyView());
-                      },
-                      child: Text('explain_in_detail'.tr,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                              color: Colors.white)),
+                                        // Get color based on this child's gender
+                                        final childGender =
+                                            child.gender.toLowerCase();
+                                        final isMale = childGender == 'male' ||
+                                            childGender == 'boy';
+                                        final childColor = isMale
+                                            ? ThemeService.primaryBlue
+                                            : NeoSafeColors.primaryPink;
+
+                                        return Obx(() {
+                                          final isSelected = controller
+                                                  .selectedChildIndex.value ==
+                                              originalIndex;
+
+                                          return GestureDetector(
+                                            onTap: () {
+                                              controller
+                                                  .selectChild(originalIndex);
+                                            },
+                                            child: Container(
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 4),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 8),
+                                              constraints: BoxConstraints(
+                                                minWidth: 80,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: isSelected
+                                                    ? childColor
+                                                    : Colors.white
+                                                        .withOpacity(0.9),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                border: Border.all(
+                                                  color: isSelected
+                                                      ? childColor
+                                                      : childColor
+                                                          .withOpacity(0.3),
+                                                  width: isSelected ? 2 : 1,
+                                                ),
+                                                boxShadow: isSelected
+                                                    ? [
+                                                        BoxShadow(
+                                                          color: childColor
+                                                              .withOpacity(0.2),
+                                                          blurRadius: 8,
+                                                          offset: Offset(0, 2),
+                                                        ),
+                                                      ]
+                                                    : [],
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  child.name,
+                                                  style: TextStyle(
+                                                    color: isSelected
+                                                        ? Colors.white
+                                                        : NeoSafeColors
+                                                            .primaryText,
+                                                    fontSize: 12,
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.w600
+                                                        : FontWeight.w500,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                              return SizedBox.shrink();
+                            }),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+            SliverPadding(
+              padding: const EdgeInsets.all(20),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  GetBuilder<TrackMyBabyController>(
+                    builder: (controller) {
+                      return _BabyOverviewCard(controller: controller);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                ]),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Beautified Chips
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 42,
+                    child: ListView.separated(
+                      controller: _chipScrollController,
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      itemCount: _getSortedMilestoneIndexes().length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      itemBuilder: (ctx, displayedIdx) {
+                        final i = _getSortedMilestoneIndexes()[displayedIdx];
+                        return Obx(() {
+                          final isSelected = _selectedIndex.value == i;
+                          final ms = babyMilestones[i];
+                          final chipLabel = _getMilestoneChipLabel(ms.month);
+                          return GestureDetector(
+                            onTap: () {
+                              _selectedIndex.value = i;
+                              _scrollToSelected();
+                            },
+                            child: AnimatedContainer(
+                              width: 100,
+                              duration: const Duration(milliseconds: 200),
+                              height: 36,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 6),
+                              decoration: BoxDecoration(
+                                gradient: isSelected
+                                    ? LinearGradient(colors: [
+                                        themeService.getPrimaryColor(),
+                                        NeoSafeColors.secondaryText
+                                            .withOpacity(0.6)
+                                      ])
+                                    : LinearGradient(colors: [
+                                        Colors.grey.shade100,
+                                        Colors.white
+                                      ]),
+                                borderRadius: BorderRadius.circular(28),
+                                boxShadow: isSelected
+                                    ? [
+                                        BoxShadow(
+                                          color: themeService
+                                              .getPrimaryColor()
+                                              .withOpacity(0.13),
+                                          blurRadius: 5,
+                                          offset: Offset(0, 2),
+                                        )
+                                      ]
+                                    : [],
+                                border: Border.all(
+                                  color: isSelected
+                                      ? themeService.getPrimaryColor()
+                                      : Colors.grey.shade300,
+                                  width: isSelected ? 1.6 : 1,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  chipLabel,
+                                  style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: isSelected
+                                                ? Colors.white
+                                                : themeService.getPrimaryColor(),
+                                            fontWeight: isSelected
+                                                ? FontWeight.w600
+                                                : FontWeight.w400,
+                                            letterSpacing: 0.1,
+                                            fontSize: 12,
+                                          ) ??
+                                      TextStyle(),
+                                ),
+                              ),
+                            ),
+                          );
+                        });
+                      },
+                    ),
+                  ),
+
+                  // Details card using selected chip
+                  Obx(() {
+                    final selected = babyMilestones[_selectedIndex.value];
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      child: _buildMilestoneCard(context, selected),
+                    );
+                  }),
+
+                  // Postpartum Care Card - Show only if baby is 2 weeks or less
+                  Obx(() {
+                    final controller = Get.find<TrackMyBabyController>();
+                    if (controller.babyAgeInWeeks.value <= 2) {
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                        child: GoalCard(
+                          gradient: LinearGradient(
+                            colors: [
+                              themeService.getLightColor(),
+                              themeService.getAccentColor()
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          icon: Icons.local_hospital,
+                          iconColor: NeoSafeColors.roseAccent,
+                          title: "postpartum_care".tr,
+                          subtitle: "postpartum_care_subtitle".tr,
+                          onTap: () => Get.toNamed('/postpartum_care'),
+                        ),
+                      );
+                    }
+                    return SizedBox.shrink();
+                  }),
+
+                  // More Details button
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    child: Center(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: StadiumBorder(),
+                          backgroundColor: themeService.getPrimaryColor(),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                          elevation: 3,
+                        ),
+                        onPressed: () {
+                          Get.to(() => TrackMyBabyView());
+                        },
+                        child: Text('explain_in_detail'.tr,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                                color: Colors.white)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1838,7 +1849,14 @@ class _HealthInfoDetailPageState extends State<_HealthInfoDetailPage> {
       ),
     );
   }
+  final speechService = Get.find<SpeechService>();
 
+  @override
+  void dispose() {
+    // Stop any ongoing TTS when leaving screen
+    speechService.stop();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

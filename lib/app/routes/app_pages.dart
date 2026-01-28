@@ -12,7 +12,6 @@ import '../modules/login/views/goal_selection_view.dart';
 import '../modules/login/views/info_view.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/login/views/signup_view.dart';
-import '../modules/google_login/bindings/google_login_binding.dart';
 import '../modules/google_login/views/google_login_view.dart';
 import '../modules/postpartum_care/bindings/postpartum_care_binding.dart';
 import '../modules/postpartum_care/views/postpartum_care_view.dart';
@@ -71,11 +70,7 @@ class AppPages {
       page: () => const PregnancySplashView(),
       binding: PregnancySplashBinding(),
     ),
-    GetPage(
-      name: Routes.googleLogin,
-      page: () => const GoogleLoginView(),
-      binding: GoogleLoginBinding(),
-    ),
+
     GetPage(
       name: Routes.login,
       page: () => const LoginView(),

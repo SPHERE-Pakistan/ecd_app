@@ -1,4 +1,8 @@
 import 'dart:io';
+
+import 'package:flutter/material.dart';
+final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
+
 class KeyConstants {
   static const String accessToken = 'accessToken';
   static const String refreshToken = 'refreshToken';

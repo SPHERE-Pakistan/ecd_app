@@ -1,17 +1,25 @@
+import 'package:babysafe/app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../utils/neo_safe_theme.dart';
 import '../controllers/google_login_controller.dart';
 import '../../pregnancy_splash/widgets/language_switcher.dart';
 
-class GoogleLoginView extends StatelessWidget {
+class GoogleLoginView extends StatefulWidget {
   const GoogleLoginView({super.key});
 
   @override
+  State<GoogleLoginView> createState() => _GoogleLoginViewState();
+}
+
+class _GoogleLoginViewState extends State<GoogleLoginView> {
+  final authService = Get.find<AuthService>();
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(GoogleLoginController());
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -152,8 +160,84 @@ class GoogleLoginView extends StatelessWidget {
                   const Spacer(flex: 3),
 
                   // Google Sign In Button
-                  Obx(() => _buildGoogleSignInButton(
-                      context, controller, screenWidth, screenHeight)),
+                  InkWell(
+                    onTap: () async {
+                      final success = await AuthWithGoogle.googleSignIn();
+                      if (success) {
+                        await Future.delayed(const Duration(milliseconds: 400));
+                        await authService.navigateAfterLogin();
+                        print('Google Account Created');
+                      }
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: screenHeight * 0.07,
+                      constraints: BoxConstraints(
+                        minHeight: 58,
+                        maxHeight: 72,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        gradient: LinearGradient(
+                          colors: [
+                            NeoSafeColors.primaryPink,
+                            NeoSafeColors.roseAccent,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: NeoSafeColors.primaryPink.withOpacity(0.4),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, -2),
+                          ),
+                        ],
+
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Google logo on white background
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Image.asset(
+                              'assets/logos/google.png',
+                              width: 20,
+                              height: 20,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.g_mobiledata,
+                                  color: Colors.grey[700],
+                                  size: 20,
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Text(
+                            'continue_with_google'.tr,
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: screenWidth * 0.042,
+                              letterSpacing: 0.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
 
                   SizedBox(height: screenHeight * 0.025),
 
@@ -185,102 +269,6 @@ class GoogleLoginView extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildGoogleSignInButton(
-      BuildContext context,
-      GoogleLoginController controller,
-      double screenWidth,
-      double screenHeight) {
-    return Container(
-      width: double.infinity,
-      height: screenHeight * 0.07,
-      constraints: BoxConstraints(
-        minHeight: 58,
-        maxHeight: 72,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: LinearGradient(
-          colors: [
-            NeoSafeColors.primaryPink,
-            NeoSafeColors.roseAccent,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: NeoSafeColors.primaryPink.withOpacity(0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-          BoxShadow(
-            color: Colors.white.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        onPressed:
-            controller.isLoading.value ? null : controller.signInWithGoogle,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: controller.isLoading.value
-            ? SizedBox(
-                width: 26,
-                height: 26,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Google logo on white background
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Image.asset(
-                      'assets/logos/google.png',
-                      width: 20,
-                      height: 20,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(
-                          Icons.g_mobiledata,
-                          color: Colors.grey[700],
-                          size: 20,
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Text(
-                    'continue_with_google'.tr,
-                    style: GoogleFonts.inter(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: screenWidth * 0.042,
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ],
-              ),
       ),
     );
   }

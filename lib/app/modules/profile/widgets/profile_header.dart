@@ -242,26 +242,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                 },
               ),
             ),
-            ListTile(
-              title: Text('transgender'.tr,
-                  style: TextStyle(color: NeoSafeColors.primaryText)),
-              leading: Radio<String>(
-                value: 'transgender',
-                groupValue: selectedValue,
-                onChanged: (value) async {
-                  Get.back();
-                  await widget.controller.updateUserGender(value!);
-                  Get.snackbar(
-                    'success'.tr,
-                    'gender_updated_success'.tr,
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: NeoSafeColors.success.withOpacity(0.1),
-                    colorText: NeoSafeColors.success,
-                  );
-                  (context as Element).markNeedsBuild();
-                },
-              ),
-            ),
+
           ],
         ),
         actions: [

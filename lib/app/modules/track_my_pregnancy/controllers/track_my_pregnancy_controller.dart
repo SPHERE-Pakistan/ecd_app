@@ -784,7 +784,7 @@ class TrackMyPregnancyController extends GetxController
                                                         style: TextStyle(
                                                           fontSize:
                                                               screenWidth *
-                                                                  0.033,
+                                                                  0.03,
                                                           color: Colors.black87,
                                                         ),
                                                       ),
@@ -817,7 +817,7 @@ class TrackMyPregnancyController extends GetxController
                                               isDense: true,
                                             ),
                                             style: TextStyle(
-                                                fontSize: screenWidth * 0.033,
+                                                fontSize: screenWidth * 0.03,
                                                 color: Colors.black87),
                                             dropdownColor: Colors.white,
                                             isExpanded: true,

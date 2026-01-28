@@ -5,7 +5,7 @@ abstract class Routes {
   static const debugImagePreview = '/debug_image_preview';
   static const home = '/home';
   static const pregnancySplash = '/pregnancy_splash';
-  static const googleLogin = '/google_login';
+
   static const login = '/login';
   static const signup = '/signup';
   static const forgetPassword = '/forget_password';

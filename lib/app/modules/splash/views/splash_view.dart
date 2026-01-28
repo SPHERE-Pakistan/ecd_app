@@ -14,9 +14,9 @@ class SplashView extends StatelessWidget {
       backgroundColor: NeoSafeColors.warmWhite,
       body: Center(
         child: Image.asset(
-          'assets/logos/sphere_logo.png',
-          width: 200,
-          height: 200,
+          'assets/logos/logo.png',
+          width: 250,
+          height: 250,
         ),
       ),
     );
