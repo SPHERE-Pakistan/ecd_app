@@ -256,21 +256,7 @@ class GetPregnantBasicDetailsSection extends StatelessWidget {
                 },
               ),
             ),
-            ListTile(
-              title: Text('transgender'.tr),
-              leading: Radio<String>(
-                value: 'transgender',
-                groupValue: selectedValue,
-                onChanged: (value) async {
-                  Get.back();
-                  await _updateGender(value!);
-                  (context as Element).markNeedsBuild();
-                  try {
-                    controller.update();
-                  } catch (_) {}
-                },
-              ),
-            ),
+
           ],
         ),
         actions: [

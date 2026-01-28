@@ -8,7 +8,7 @@ final Map<String, String> urPK = {
   'start_birth_plan': 'جنم کی تیاری شروع کریں',
   'start_birth_plan_title': 'تمام پہلے تیاری شروع کریں',
   'sardar_trust': 'اسفیئر کنسلٹنگ',
-  'pregnancy_companion': 'آپ کا سفرِ مادریت',
+  'pregnancy_companion': 'بچے کی نشوونما کا سفر',
   'pregnancy_journey': 'حمل کا سفر',
   'weeks': 'ہفتے',
   'weeks_pregnant': 'ہفتے کا حمل',
@@ -69,8 +69,8 @@ final Map<String, String> urPK = {
       'کب حمل ٹھہر سکتا ہے اور کب نہیں۔',
 
   // Google Login page
-  'welcome_to_babysafe': 'اسفیئر کنسلٹنگ میں خوش آمدید',
-  'your_pregnancy_companion': 'آپ کا سفرِ مادریت',
+  'welcome_to_babysafe': 'محفوظ بچہ ایپ میں خوش آمدید',
+  'your_pregnancy_companion': 'بچے کی نشوونما کا سفر',
   'your_pregnancy': 'آپ کا حمل',
   'what_you_get': 'آپ کو کیا ملے گا',
   'track_pregnancy': 'حمل کو ٹریک کریں',
@@ -132,6 +132,7 @@ final Map<String, String> urPK = {
   'get_pregnant_subtitle':
       'اپنے سائیکل اور حاملہ ہونے کے بہترین دنوں کو ٹریک کریں',
   'track_my_pregnancy': 'حمل کی نگرانی',
+  'track_my_wife_pregnancy': 'میری بیوی کے حمل کی نگرانی کریں',
   'track_my_pregnancy_subtitle':
       'اپنے بچے کی نشونما اور آنے والے سنگ میل کی نگرانی کریں',
   'child_development': 'بچے کی نشوونما',

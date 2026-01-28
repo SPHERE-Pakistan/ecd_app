@@ -9,7 +9,7 @@ final Map<String, String> enUS = {
   'start_birth_plan': 'Start Your Birth Plan',
   'start_birth_plan_title': 'Begin comprehensive preparation',
   'sardar_trust': 'SPHERE CONSULTING',
-  'pregnancy_companion': 'Your Motherhood Journey',
+  'pregnancy_companion': 'The Journey of a Child’s Growth',
   'pregnancy_journey': 'Pregnancy Journey',
   'weeks': 'weeks',
   // 'weeks_pregnant': 'weeks pregnant',
@@ -70,8 +70,8 @@ final Map<String, String> enUS = {
       'when you can get pregnant, and when you cannot.',
 
   // Google Login page
-  'welcome_to_babysafe': 'Welcome to SPHERE CONSULTING',
-  'your_pregnancy_companion': 'Your Motherhood Journey ',
+  'welcome_to_babysafe': 'Welcome to Early Childhood Development App',
+  'your_pregnancy_companion': 'The Journey of a Child’s Growth',
   'your_pregnancy': 'Your Pregnancy',
   'what_you_get': 'What You Get',
   'track_pregnancy': 'Track Pregnancy',
@@ -128,6 +128,8 @@ final Map<String, String> enUS = {
   'get_pregnant': 'Get pregnant',
   'get_pregnant_subtitle': 'Track your cycles and best days to conceive',
   'track_my_pregnancy': 'Track pregnancy',
+  'track_my_wife_pregnancy': 'Track my Wife pregnancy',
+
   'track_my_pregnancy_subtitle':
       'Monitor your baby\'s progress and upcoming milestones',
   'child_development': 'Child\'s development',

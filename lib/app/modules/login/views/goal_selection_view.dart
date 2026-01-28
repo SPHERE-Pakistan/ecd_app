@@ -218,6 +218,8 @@
 // }
 
 import 'package:babysafe/app/modules/login/widgets/login_logo.dart';
+import 'package:babysafe/app/services/auth_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -299,7 +301,8 @@ class _GoalSelectionViewState extends State<GoalSelectionView> {
       double scaleFactor = width / 375; // 375 is base width (iPhone SE/8)
       return (baseSize * scaleFactor).clamp(baseSize * 0.85, baseSize * 1.15);
     }
-
+    final gender =
+        Get.find<ProfileController>().userGender.value;
     return Scaffold(
       body: Stack(
         children: [
@@ -439,7 +442,7 @@ class _GoalSelectionViewState extends State<GoalSelectionView> {
                             ),
                             icon: Icons.pregnant_woman,
                             iconColor: NeoSafeColors.roseAccent,
-                            title: "track_my_pregnancy".tr,
+                            title: gender.toLowerCase()=='male'?'track_my_wife_pregnancy'.tr:"track_my_pregnancy".tr,
                             subtitle: "track_my_pregnancy_subtitle".tr,
                             onTap: () =>
                                 controller.onGoalCardTap('track_pregnance'),
@@ -534,7 +537,24 @@ class _GoalSelectionViewState extends State<GoalSelectionView> {
           Positioned(
             top: responsiveHeight(5),
             right: responsiveWidth(6),
-            child: const LanguageSwitcher(),
+            child: Row(
+              children: [
+                const LanguageSwitcher(),
+                SizedBox(width: 10,),
+                GestureDetector(
+                    onTap: () async {
+                      final authService = Get.find<AuthService>();
+                      await authService.logout();
+                    },
+                    child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 20,
+
+                        child: Icon(Icons.power_settings_new, color: NeoSafeColors.primaryPink))),
+
+
+              ],
+            ),
           ),
         ],
       ),

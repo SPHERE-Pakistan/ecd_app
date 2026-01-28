@@ -628,18 +628,7 @@ class PregnancyInfoSection extends StatelessWidget {
                 },
               ),
             ),
-            ListTile(
-              title: Text('transgender'.tr),
-              leading: Radio<String>(
-                value: 'transgender',
-                groupValue: controller.userGender.value,
-                onChanged: (value) {
-                  Get.back();
-                  controller.updateUserGender(value!);
-                  (context as Element).markNeedsBuild();
-                },
-              ),
-            ),
+
           ],
         ),
         actions: [

@@ -17,6 +17,7 @@ class GoogleLoginView extends StatefulWidget {
 
 class _GoogleLoginViewState extends State<GoogleLoginView> {
   final authService = Get.find<AuthService>();
+  bool isLoading = false; // 🔹 Track Google login state
 
   @override
   Widget build(BuildContext context) {
@@ -116,8 +117,8 @@ class _GoogleLoginViewState extends State<GoogleLoginView> {
                     style: GoogleFonts.poppins(
                       color: NeoSafeColors.primaryText,
                       fontWeight: FontWeight.w700,
-                      fontSize: screenWidth * 0.08,
-                      letterSpacing: 0.5,
+                      fontSize: screenWidth * 0.052,
+                      letterSpacing: 0.43,
                       height: 1.2,
                       shadows: [
                         Shadow(
@@ -143,7 +144,7 @@ class _GoogleLoginViewState extends State<GoogleLoginView> {
                     style: GoogleFonts.inter(
                       color: NeoSafeColors.secondaryText,
                       fontWeight: FontWeight.w500,
-                      fontSize: screenWidth * 0.045,
+                      fontSize: screenWidth * 0.034,
                       letterSpacing: 0.3,
                       height: 1.3,
                       shadows: [
@@ -160,14 +161,29 @@ class _GoogleLoginViewState extends State<GoogleLoginView> {
                   const Spacer(flex: 3),
 
                   // Google Sign In Button
-                  InkWell(
+                  isLoading
+                      ? SizedBox(
+                    width: double.infinity,
+                    height: screenHeight * 0.07,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                      : InkWell(
                     onTap: () async {
-                      final success = await AuthWithGoogle.googleSignIn();
+                      setState(() => isLoading = true); // Start loader
+                      final success =
+                      await AuthWithGoogle.googleSignIn();
                       if (success) {
-                        await Future.delayed(const Duration(milliseconds: 400));
+
+                        await Future.delayed(
+                            const Duration(milliseconds: 200));
                         await authService.navigateAfterLogin();
                         print('Google Account Created');
                       }
+                      setState(() => isLoading = false); // Stop loader
                     },
                     child: Container(
                       width: double.infinity,

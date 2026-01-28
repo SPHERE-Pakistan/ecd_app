@@ -3,6 +3,7 @@ import 'package:babysafe/app/apiEndPoint/global_key.dart';
 import 'package:babysafe/app/services/SharedPreferenceService/sharePreferenceService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthWithGoogle {
@@ -21,7 +22,11 @@ class AuthWithGoogle {
           await FirebaseAuth.instance.signInWithCredential(credential);
       final user = userCredential.user;
       if (user == null) return false;
-
+      Get.snackbar(
+        'Welcome ${user.displayName}',
+        '',
+        snackPosition: SnackPosition.BOTTOM,
+      );
       /// ✅ SAVE LOCALLY
       await SharedPreferencesService().setString(
         KeyConstants.userId,
